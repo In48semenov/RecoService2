@@ -1,0 +1,20 @@
+registered_model:
+  - model_hardcode
+  - userKNN_with_popular
+  - userKNN_tfidf
+  - userKNN_tfidf_implicit
+  - userKNN_tfidf_implicit_numpy
+  - userKNN_tfidf_implicit_numpy_online
+  - userKNN_bmp25
+  - userKNN_bmp25_implicit
+  - userKNN_bmp25_implicit_numpy
+  - userKNN_bmp25_implicit_numpy_online
+  - popular
+  - blending_tfidf_bmp25_idf_offline
+  - blending_tfidf_bmp25_idf_online
+  - blending_tfidf_bmp25_idf_numpy_online
+  - als_nmslib
+  - lightfm_nmslib
+
+popular_items: ./data/hw_3/popular_item.csv
+interactions: ./data/kion_train/interactions_with_avatar.csv
