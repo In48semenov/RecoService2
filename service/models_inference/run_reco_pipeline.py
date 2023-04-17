@@ -3,10 +3,10 @@ import typing as tp
 import pandas as pd
 import yaml
 
-from service.models_storage.knn_model.reco_knn_model import RecommendUserKNN
-from service.models_storage.vector_model.reco_vector_model import \
+from service.models_inference.knn_model.reco_knn_model import RecommendUserKNN
+from service.models_inference.vector_model.reco_vector_model import \
     RecommendVectorModel
-from service.models_storage.ranker_model.reco_ranker_model import RankerModel
+from service.models_inference.ranker_model.reco_ranker_model import RankerModel
 
 
 class MainPipeline:

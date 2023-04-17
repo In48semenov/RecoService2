@@ -4,7 +4,7 @@ import implicit
 import numpy as np
 import pandas as pd
 
-from service.models_storage.knn_model.download_artifact_userKNN import DownloadArtifact
+from service.models_inference.knn_model.download_artifact_userKNN import DownloadArtifact
 
 
 class RecommendUserKNN:

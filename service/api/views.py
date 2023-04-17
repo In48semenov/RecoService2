@@ -13,8 +13,8 @@ from service.api.exceptions import (
 from service.configs.responses_cfg import example_responses
 from service.log import app_logger
 from service.utils.common_artifact import registered_model
-from service.models_storage.run_reco_pipeline import MainPipeline
-from service.models_storage.popular.reco_popular import add_reco_popular
+from service.models_inference.run_reco_pipeline import MainPipeline
+from service.models_inference.popular.reco_popular import add_reco_popular
 
 with open('./service/envs/authentication_env.yaml') as env_config:
     ENV_TOKEN = yaml.safe_load(env_config)
