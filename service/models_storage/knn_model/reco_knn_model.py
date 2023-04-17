@@ -4,7 +4,7 @@ import implicit
 import numpy as np
 import pandas as pd
 
-from service.utils.user_knn.download_artifact_userKNN import DownloadArtifact
+from service.models_storage.knn_model.download_artifact_userKNN import DownloadArtifact
 
 
 class RecommendUserKNN:
@@ -81,7 +81,7 @@ class RecommendUserKNN:
         blending: bool = False,
     ) -> tp.List[int]:
         """
-            The function creates online recommendation.
+        The function creates online recommendation.
         """
         recs = list()
         if user_id in self.artifact["users_mapping"]:

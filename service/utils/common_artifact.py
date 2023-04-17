@@ -1,7 +1,7 @@
 import pandas as pd
 import yaml
 
-PATH_CONFIG_FILE = "./service/config/common-data.cfg.yml"
+PATH_CONFIG_FILE = "./service/configs/common-data.cfg.yml"
 
 with open(PATH_CONFIG_FILE) as models_config:
     data = yaml.safe_load(models_config)

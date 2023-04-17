@@ -15,6 +15,7 @@ registered_model:
   - blending_tfidf_bmp25_idf_numpy_online
   - als_nmslib
   - lightfm_nmslib
+  - 2stage_lfm_cbm_pointwise
 
-popular_items: ./data/hw_3/popular_item.csv
+popular_items: ./data/kion_train/popular_item.csv
 interactions: ./data/kion_train/interactions_with_avatar.csv

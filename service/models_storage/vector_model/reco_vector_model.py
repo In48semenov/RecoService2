@@ -8,11 +8,12 @@ from rectools import Columns
 from service.utils.common_artifact import interactions
 
 
-class RecommendMF:
+class RecommendVectorModel:
     """
-        Class for recommendation method Matrix Factorization
+    Class for recommendation method Matrix Factorization
     """
-    path_config_run = "./service/config/inference-MF.cfg.yml"
+    path_config_run = "./service/configs/inference-vector-model.cfg.yml"
+
     def __init__(self):
         """
         Download model artifact
