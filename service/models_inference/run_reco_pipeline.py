@@ -24,36 +24,42 @@ class MainPipeline:
             pipeline_params = yaml.safe_load(models_config)
 
         self.type_model = pipeline_params["type_model"]
+        self.models = dict()
+
         """
         Download knn Models
         """
-        self.models = dict()
         self.models["knn_model"] = RecommendUserKNN()
 
         """
         Download ALS / LightFM Models
         """
-        self.model["vector_model"] = RecommendVectorModel()
+        self.models["vector_model"] = RecommendVectorModel()
 
         """
         Download rankers
         """
-        self.model["candidates"] = pd.read_csv(
+        self.models["candidates"] = pd.read_pickle(
             self.type_model["two_stage"]["data_candidate"]
         )
-        self.model["ranker_pointwise"] = RankerModel()
+        self.models["ranker_pointwise"] = RankerModel()
 
     def recommend(self, user_id: int, k_recs: int) -> tp.List[int]:
 
         if self.type_model["one_stage"]["run"]:
-            return self.model.recommend(user_id, k_recs)
+            return self.models.recommend(user_id, k_recs)
 
         elif self.type_model["two_stage"]["run"]:
-            candidates = self.model["candidates"][
-                self.model["candidates"]["user_id"] == user_id
-            ][["item_id", "lfm_score", "rank"]]
+            candidates = self.models["candidates"][
+                self.models["candidates"]["user_id"] == user_id
+            ].explode(
+                column=["item_id", "lfm_score", "rank"]
+            )[["item_id", "lfm_score", "rank"]]
 
-            return self.model[
+            if len(candidates) == 0:
+                return []
+
+            return self.models[
                 self.type_model["two_stage"]["model_ranker"]
             ].recommend(user_id, k_recs, candidates)
 

@@ -4,5 +4,5 @@ type_model:
     model:
   two_stage:
     run: True
-    data_candidate: ./data/candidates_all.csv
+    data_candidate: ./data/candidates_all.pickle
     model_ranker: ranker_pointwise

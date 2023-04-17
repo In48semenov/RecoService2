@@ -8,14 +8,14 @@ import yaml
 
 
 class RankerModel:
-    path_config_run = "./service/configs/inference-vector-model.cfg.yml"
+    path_config_run = "./service/configs/inference-ranker.cfg.yml"
 
     def __init__(self):
         """
         Download model artifacts.
         """
         with open(self.path_config_run) as models_config:
-            params = yaml.safe_load(models_config)
+            params = yaml.safe_load(models_config)["pointwise"]
 
         with open(params["model_path"], "rb") as file:
             self.model = dill.load(file)
@@ -54,6 +54,8 @@ class RankerModel:
             ],
             axis=1
         )[self.column_features]
+        data["genres"] = data["genres"].astype(str)
+        data["countries"] = data["countries"].astype(str)
 
         ranker_score = self.model.predict_proba(data)[:, 1]
         ranker_score = np.argsort(ranker_score)[::-1]
