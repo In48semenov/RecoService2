@@ -39,9 +39,9 @@ class MainPipeline:
         """
         Download rankers
         """
-        self.models["candidates"] = pd.read_csv(
-            self.type_model["two_stage"]["data_candidate"]
-        )
+        # self.models["candidates"] = pd.read_csv(
+        #     self.type_model["two_stage"]["data_candidate"]
+        # )
         # self.models["ranker_pointwise"] = RankerModel()
 
     def recommend(self, user_id: int, k_recs: int) -> tp.List[int]:
@@ -51,12 +51,12 @@ class MainPipeline:
                 self.type_model["one_stage"]["model"]
             ].recommend(user_id, k_recs)
 
-        elif self.type_model["two_stage"]["run"]:
-            candidates = self.models["candidates"][
-                self.models["candidates"]["user_id"] == user_id
-            ].explode(
-                column=["item_id", "lfm_score", "rank"]
-            )[["item_id", "lfm_score", "rank"]]
+        # elif self.type_model["two_stage"]["run"]:
+        #     candidates = self.models["candidates"][
+        #         self.models["candidates"]["user_id"] == user_id
+        #     ].explode(
+        #         column=["item_id", "lfm_score", "rank"]
+        #     )[["item_id", "lfm_score", "rank"]]
 
             # if len(candidates) == 0:
             #     return []

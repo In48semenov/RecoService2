@@ -22,10 +22,11 @@ jupyter = "^1.0.0"
 pandas = "^1.5.1"
 tqdm = "^4.64.1"
 dill = "^0.3.6"
-implicit = "^0.6.2"
+#implicit = "^0.6.2"
 nmslib = "^2.1.1"
 pyyaml = "^6.0"
-catboost = "^1.1.1"
+#catboost = "^1.1.1"
+sentry-sdk = "^1.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
