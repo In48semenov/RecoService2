@@ -80,6 +80,6 @@ venv.bak/
 /notebooks/learn_error.tsv
 /notebooks/test_error.tsv
 /notebooks/time_left.tsv
-/data/hw_2/
-/data/kion_train/
-/data/knn/
+/service/data/hw_2/
+/service/data/kion_train/
+/service/data/knn/

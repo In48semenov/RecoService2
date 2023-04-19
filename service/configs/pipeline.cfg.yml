@@ -1,8 +1,8 @@
 type_model:
   one_stage:
-    run: False
-    model:
-  two_stage:
     run: True
-    data_candidate: ./data/candidates_all.pickle
+    model: knn_model
+  two_stage:
+    run: False
+    data_candidate: ./service/data/candidates.csv
     model_ranker: ranker_pointwise

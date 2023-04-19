@@ -1,8 +1,8 @@
 pointwise:
   model_path: ./service/weights/pointwise/cbm_pointwise_all_data.dill
   data_user:
-    path_users_features: ./data/kion_train/users_features.csv
-    path_items_features: ./data/kion_train/items_features.csv
+    path_users_features: ./service/data/kion_train/users_features.csv
+    path_items_features: ./service/data/kion_train/items_features.csv
     columns:
       - lfm_score
       - rank
