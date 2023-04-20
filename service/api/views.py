@@ -55,7 +55,7 @@ async def authorization_by_token(
     tags=["Health"],
 )
 async def health(
-    # token: HTTPAuthorizationCredentials = Depends(authorization_by_token)
+    token: HTTPAuthorizationCredentials = Depends(authorization_by_token)
 ) -> str:
     return "I am alive"
 
@@ -70,7 +70,7 @@ async def get_reco(
     request: Request,
     model_name: str,
     user_id: int,
-    # token: HTTPAuthorizationCredentials = Depends(authorization_by_token),
+    token: HTTPAuthorizationCredentials = Depends(authorization_by_token),
 ) -> RecoResponse:
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
@@ -80,7 +80,7 @@ async def get_reco(
             error_message=f"Model name '{model_name}' not found"
         )
 
-    if user_id > 10 ** 6:
+    if user_id > 10 ** 9:
         capture_exception(f"User {user_id} not found")
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 

@@ -4,8 +4,8 @@ import pandas as pd
 import yaml
 
 from service.models_inference.knn_model.reco_knn_model import RecommendUserKNN
-# from service.models_inference.vector_model.reco_vector_model import \
-#     RecommendVectorModel
+from service.models_inference.vector_model.reco_vector_model import \
+    RecommendVectorModel
 from service.models_inference.ranker_model.reco_ranker_model import RankerModel
 
 
@@ -34,15 +34,15 @@ class MainPipeline:
         """
         Download ALS / LightFM Models
         """
-        # self.models["vector_model"] = RecommendVectorModel()
+        self.models["vector_model"] = RecommendVectorModel()
 
         """
         Download rankers
         """
-        # self.models["candidates"] = pd.read_csv(
-        #     self.type_model["two_stage"]["data_candidate"]
-        # )
-        # self.models["ranker_pointwise"] = RankerModel()
+        self.models["candidates"] = pd.read_csv(
+            self.type_model["two_stage"]["data_candidate"]
+        )
+        self.models["ranker_pointwise"] = RankerModel()
 
     def recommend(self, user_id: int, k_recs: int) -> tp.List[int]:
 
@@ -51,19 +51,19 @@ class MainPipeline:
                 self.type_model["one_stage"]["model"]
             ].recommend(user_id, k_recs)
 
-        # elif self.type_model["two_stage"]["run"]:
-        #     candidates = self.models["candidates"][
-        #         self.models["candidates"]["user_id"] == user_id
-        #     ].explode(
-        #         column=["item_id", "lfm_score", "rank"]
-        #     )[["item_id", "lfm_score", "rank"]]
+        elif self.type_model["two_stage"]["run"]:
+            candidates = self.models["candidates"][
+                self.models["candidates"]["user_id"] == user_id
+            ].explode(
+                column=["item_id", "lfm_score", "rank"]
+            )[["item_id", "lfm_score", "rank"]]
 
-            # if len(candidates) == 0:
-            #     return []
-            #
-            # return self.models[
-            #     self.type_model["two_stage"]["model_ranker"]
-            # ].recommend(user_id, k_recs, candidates)
+            if len(candidates) == 0:
+                return []
+
+            return self.models[
+                self.type_model["two_stage"]["model_ranker"]
+            ].recommend(user_id, k_recs, candidates)
 
         else:
             return []

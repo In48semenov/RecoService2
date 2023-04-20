@@ -1,5 +1,5 @@
 run_params:
-  type_reco: offline  # can have two meanings: offline / online
+  type_reco: online  # can have two meanings: offline / online
   artifact:
     offline_reco_path: ./service/data/knn/bmp_25_k60_rectools.csv  # if type_reco = 'online' then field not use
     model_path_1: ./service/weights/knn/tfidf-k60-implicit.dill  # if type_reco = 'offline' then field not use

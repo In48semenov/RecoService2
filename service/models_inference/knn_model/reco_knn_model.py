@@ -1,6 +1,6 @@
 import typing as tp
 
-# import implicit
+import implicit
 import numpy as np
 import pandas as pd
 
@@ -32,7 +32,7 @@ class RecommendUserKNN:
     def _get_sim_user(
         user: int,
         k_recs: int,
-        model,  # : implicit,
+        model: implicit,
         users_mapping: tp.Dict[int, int],
         users_inv_mapping: tp.Dict[int, int],
         bmp: bool,
@@ -80,7 +80,7 @@ class RecommendUserKNN:
         self,
         user_id: int,
         k_recs: int,
-        model,  # : implicit = None,
+        model: implicit = None,
         bmp=None,
         blending: bool = False,
     ) -> tp.List[int]:

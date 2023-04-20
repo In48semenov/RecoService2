@@ -1,7 +1,5 @@
 import dill
-import typing as tp
 
-# from rectools import Columns
 import numpy as np
 import pandas as pd
 import yaml
