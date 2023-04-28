@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.16.1
+    volumes:
+      - ./configs/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./docker_volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: "MyPw123"
+      discovery.type: single-node
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: kibana:7.16.1
+    volumes:
+      - ./configs/kibana/config.yml:/usr/share/kibana/config/kibana.yml:ro
+    environment:
+      - ELASTICSEARCH_HOSTS:http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+#    networks:
+#      - elk
+    depends_on:
+      - elasticsearch
+#
+  beats:
+    image: elastic/filebeat:7.16.2
+    volumes:
+      - ./configs/filebeat/config.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./app:/usr/src/app
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  reco_service:
+    build: .
+    container_name: reco_service
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/usr/src/app
+
+volumes:
+  elasticsearch_data:
+    driver: local

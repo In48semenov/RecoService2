@@ -3,16 +3,16 @@ import typing as tp
 import nmslib
 import numpy as np
 import yaml
-from rectools import Columns
 
 from service.utils.common_artifact import interactions
 
 
-class RecommendMF:
+class RecommendVectorModel:
     """
-        Class for recommendation method Matrix Factorization
+    Class for recommendation method Matrix Factorization
     """
-    path_config_run = "./service/config/inference-MF.cfg.yml"
+    path_config_run = "./service/configs/inference-vector-model.cfg.yml"
+
     def __init__(self):
         """
         Download model artifact
@@ -42,10 +42,10 @@ class RecommendMF:
         """
         Create item and user mapping
         """
-        users_mapping = dict(enumerate(interactions[Columns.User].unique()))
+        users_mapping = dict(enumerate(interactions["user_id"].unique()))
         self.users_inv_mapping = {v: k for k, v in users_mapping.items()}
         self.items_mapping = dict(
-            enumerate(interactions[Columns.Item].unique())
+            enumerate(interactions["item_id"].unique())
         )
 
     def recommend(self, user_id: int, k_recs: int) -> tp.List[int]:

@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<3.10.0"
 fastapi = "^0.65.1"
 pydantic = "^1.8.2"
 gunicorn = "^20.1.0"
@@ -21,14 +21,12 @@ starlette = "^0.14.2"
 jupyter = "^1.0.0"
 pandas = "^1.5.1"
 tqdm = "^4.64.1"
-numba = "^0.56.4"
-plotly = "^5.11.0"
-matplotlib = "^3.6.2"
 dill = "^0.3.6"
-optuna = "^3.0.4"
-lightfm = "^1.16"
-seaborn = "^0.12.1"
+#implicit = "^0.6.2"
 nmslib = "^2.1.1"
+pyyaml = "^6.0"
+#catboost = "^1.1.1"
+sentry-sdk = "^1.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

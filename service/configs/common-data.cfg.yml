@@ -1,0 +1,7 @@
+registered_model:
+  - bmp25
+  - tfidf
+  - 2stage_baseline
+
+popular_items: ./service/data/kion_train/popular_item.csv
+interactions: ./service/data/kion_train/interactions_with_avatar.csv

@@ -56,7 +56,7 @@ loglevel = env("GUNICORN_LOGLEVEL", "INFO")
 # Redirect stdout/stderr to specified file in errorlog.
 capture_output = env("GUNICORN_CAPTURE_OUTPUT", False)
 
-# The log config dictionary to use.
+# The log configs dictionary to use.
 logconfig_dict = log.get_config(settings.get_config())
 
 # The maximum size of HTTP request line in bytes.

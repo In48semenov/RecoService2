@@ -66,4 +66,21 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
+# logging
+/notebooks/catboost_info/
+/notebooks/CBM_PointWise-04-16-2023-00-26-32/
+/notebooks/CBM_PointWise-04-16-2023-00-35-57/
+/notebooks/CBM_PointWise-04-16-2023-01-19-32/
+/notebooks/CBM_PointWise_all_data-04-16-2023-20-05-43/
+/notebooks/cbm_test/
+/notebooks/learn/
+/notebooks/mlruns/
+/notebooks/test/
+/notebooks/tmp/
+/notebooks/learn_error.tsv
+/notebooks/test_error.tsv
+/notebooks/time_left.tsv
+/service/data/hw_2/
+/service/data/kion_train/
+/service/data/knn/
+/data.zip

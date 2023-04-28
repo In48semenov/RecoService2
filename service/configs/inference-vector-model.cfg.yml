@@ -1,5 +1,5 @@
-user_embeddings: ./data/hw_4/lfm_users.npy
-item_embeddings: ./data/hw_4/lfm_items.npy
+user_embeddings: ./service/weights/lfm/lfm_users.npy
+item_embeddings: ./service/weights/lfm/lfm_items.npy
 approximate_search:
   space_name: 'negdotprod'
   method: 'hnsw'

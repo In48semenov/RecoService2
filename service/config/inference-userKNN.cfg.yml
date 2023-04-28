@@ -1,8 +1,0 @@
-run_params:
-  type_reco: online  # can have two meanings: offline / online
-  artifact:
-    offline_reco_path: ./data/hw_3/blending_tfidf_bmp25_idf_rectools_10.csv  # if type_reco = 'online' then field not use
-    model_path_1: ./service/weights/userKNN/tfidf-k60-implicit.dill  # if type_reco = 'offline' then field not use
-    model_path_2: ./service/weights/userKNN/bmp25-k60-implicit.dill  # if blending = False then field not use
-    index_bmp_model: 2  # index bmp model (if -1 then bmp model not use)
-    blending: True  # if type_reco = 'offline' then field not use

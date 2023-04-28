@@ -7,7 +7,7 @@ import yaml
 
 
 class DownloadArtifact:
-    config_path = './service/config/inference-userKNN.cfg.yml'
+    config_path = './service/configs/inference-knn-model.cfg.yml'
     path_interactions_data = './data/kion_train/interactions.csv'
     path_item_idf = "./data/kion_train/items_idf.csv"
 

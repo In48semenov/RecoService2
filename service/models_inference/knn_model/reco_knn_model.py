@@ -4,7 +4,8 @@ import implicit
 import numpy as np
 import pandas as pd
 
-from service.utils.user_knn.download_artifact_userKNN import DownloadArtifact
+from service.models_inference.knn_model.download_artifact_knn import \
+    DownloadArtifact
 
 
 class RecommendUserKNN:
@@ -40,16 +41,19 @@ class RecommendUserKNN:
             The function find similar users.
         """
         user_id = users_mapping[user]
-        recs = model.similar_items(user_id, N=k_recs)
+        recs, scores = model.similar_items(user_id, N=k_recs)
 
         if bmp:
             recs = list(
-                filter(lambda x: x[0] != users_inv_mapping[user_id], recs))
+                filter(lambda x: x != users_inv_mapping[user_id], recs))
 
         else:
-            recs = list(filter(lambda x: x[1] < 1, recs))
+            start_idx = abs(
+                len(list(filter(lambda x: x < 1, scores))) - len(scores)
+            )
+            recs = recs[start_idx:]
 
-        return [users_inv_mapping[user] for user, _ in recs]
+        return [users_inv_mapping[int(user)] for user in recs]
 
     def _get_offline_reco(
         self,
@@ -62,7 +66,7 @@ class RecommendUserKNN:
         offline_reco = self.artifact["offline_reco"]
 
         recs = list()
-        if user_id in ['user_id']:
+        if user_id in offline_reco["user_id"]:
             recs = offline_reco[
                 offline_reco['user_id'] == user_id
                 ]['item_id'].tolist()
@@ -81,7 +85,7 @@ class RecommendUserKNN:
         blending: bool = False,
     ) -> tp.List[int]:
         """
-            The function creates online recommendation.
+        The function creates online recommendation.
         """
         recs = list()
         if user_id in self.artifact["users_mapping"]:

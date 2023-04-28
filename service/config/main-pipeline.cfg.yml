@@ -1,3 +1,0 @@
-type_model:
-  user_knn: True
-  matrix_factorization: False

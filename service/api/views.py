@@ -4,20 +4,32 @@ import yaml
 from fastapi import APIRouter, Depends, FastAPI, Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
+import sentry_sdk
+from sentry_sdk import capture_exception
 
 from service.api.exceptions import (
     AuthenticateError,
     ModelNotFoundError,
     UserNotFoundError,
 )
-from service.config.responses_cfg import example_responses
+from service.configs.responses_cfg import example_responses
 from service.log import app_logger
 from service.utils.common_artifact import registered_model
-from service.utils.run_reco_pipeline import pipeline
-from service.utils.popular.run_reco_popular import add_reco_popular
+from service.models_inference.run_reco_pipeline import MainPipeline
+from service.models_inference.popular.reco_popular import add_reco_popular
 
 with open('./service/envs/authentication_env.yaml') as env_config:
     ENV_TOKEN = yaml.safe_load(env_config)
+
+with open("./service/envs/sentry_env.yml") as file:
+    sentry_dsn = yaml.safe_load(file)["dsn"]
+
+sentry_sdk.init(
+    dsn=sentry_dsn,
+    traces_sample_rate=1.0
+)
+
+pipeline = MainPipeline()
 
 
 class RecoResponse(BaseModel):
@@ -63,17 +75,22 @@ async def get_reco(
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
     if model_name not in registered_model:
+        capture_exception(f"Model name '{model_name}' not found")
         raise ModelNotFoundError(
             error_message=f"Model name '{model_name}' not found"
         )
 
     if user_id > 10 ** 9:
+        capture_exception(f"User {user_id} not found")
+        raise UserNotFoundError(error_message=f"User {user_id} not found")
+
+    if user_id % 666 == 0:
+        capture_exception(f"User {user_id} not found")
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     k_recs = request.app.state.k_recs
 
     recs = pipeline.recommend(user_id=user_id, k_recs=k_recs)
-
     recs = add_reco_popular(k_recs=k_recs, curr_recs=recs)
 
     return RecoResponse(user_id=user_id, items=recs)
