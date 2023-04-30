@@ -1,0 +1,17 @@
+honestly: True
+min_score: 70
+max_score: 98
+
+text_template:
+  dummy: "Рекомендую посмотреть контент жанра "
+  popular: "Это нравится большому количеству пользователей"
+  als: "Рекомендую, тем кому нравится "
+
+data:
+  items:
+    path: ./service/data/kion_train/items.csv
+    columns:
+      - item_id
+      - title
+      - genres
+

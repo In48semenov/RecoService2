@@ -4,8 +4,10 @@ import implicit
 import numpy as np
 import pandas as pd
 
-from service.models_inference.knn_model.download_artifact_knn import \
-    DownloadArtifact
+from service.models_inference.knn_model.download_artifact_knn import (
+    DownloadArtifact,
+)
+from service.utils import Columns
 
 
 class RecommendUserKNN:
@@ -66,10 +68,10 @@ class RecommendUserKNN:
         offline_reco = self.artifact["offline_reco"]
 
         recs = list()
-        if user_id in offline_reco["user_id"]:
+        if user_id in offline_reco[Columns.User]:
             recs = offline_reco[
-                offline_reco['user_id'] == user_id
-                ]['item_id'].tolist()
+                offline_reco[Columns.User] == user_id
+                ][Columns.Item].tolist()
 
             if len(recs) > k_recs:
                 recs = recs[:k_recs]

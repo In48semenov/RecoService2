@@ -5,7 +5,7 @@ registered_model:
   - als
 
 explained_model:
-  als: "./service/weights/als/als_model-implicit.dill"
+  als: ./service/weights/als/als_model-implicit.dill
 
 popular_items: ./service/data/knn/popular_mean_weight_item.csv
-interactions: ./service/data/kion_train/interactions_with_avatar.csv
+interactions: ./service/data/kion_train/interactions.csv

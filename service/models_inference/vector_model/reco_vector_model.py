@@ -44,7 +44,7 @@ class RecommendVectorModel:
         """
         users_mapping = dict(enumerate(interactions["user_id"].unique()))
         self.users_inv_mapping = {v: k for k, v in users_mapping.items()}
-        self.items_mapping = dict(
+        self.items_inv_mapping = dict(
             enumerate(interactions["item_id"].unique())
         )
 
@@ -57,6 +57,6 @@ class RecommendVectorModel:
             items_idx = self.index.knnQuery(
                 self.user_embeddings[avatar_idx], k=k_recs
             )[0].tolist()
-            return [self.items_mapping[idx] for idx in items_idx]
+            return [self.items_inv_mapping[idx] for idx in items_idx]
         else:
             return []

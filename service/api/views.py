@@ -1,24 +1,23 @@
 from typing import List
 
+import sentry_sdk
 import yaml
 from fastapi import APIRouter, Depends, FastAPI, Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
-import sentry_sdk
-from sentry_sdk import capture_exception
+from sentry_sdk import capture_message
 
 from service.api.exceptions import (
     AuthenticateError,
     ModelNotFoundError,
     UserNotFoundError,
 )
+from service.casual_inference import ModelOutputExplain
 from service.configs.responses_cfg import example_responses
 from service.log import app_logger
-from service.utils.common_artifact import registered_model, explained_model
-from service.models_inference.run_reco_pipeline import MainPipeline
 from service.models_inference.popular.reco_popular import add_reco_popular
-from service.casual_inference.explain import ModelOutputExplain
-
+from service.models_inference.run_reco_pipeline import MainPipeline
+from service.utils.common_artifact import explained_model, registered_model
 
 with open('./service/envs/authentication_env.yaml') as env_config:
     ENV_TOKEN = yaml.safe_load(env_config)
@@ -32,7 +31,7 @@ sentry_sdk.init(
 )
 
 pipeline = MainPipeline()
-model_output_explain = ModelOutputExplain()
+model_output_explain = ModelOutputExplain(explained_model)
 
 
 class RecoResponse(BaseModel):
@@ -83,13 +82,13 @@ async def get_reco(
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
     if model_name not in registered_model:
-        capture_exception(f"Model name '{model_name}' not found")
+        capture_message(f"Model name '{model_name}' not found")
         raise ModelNotFoundError(
             error_message=f"Model name '{model_name}' not found"
         )
 
     if user_id > 10 ** 9:
-        capture_exception(f"User {user_id} not found")
+        capture_message(f"User {user_id} not found")
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     k_recs = request.app.state.k_recs
@@ -106,47 +105,47 @@ async def get_reco(
     response_model=ExplainResponse,
 )
 async def explain(
-    request: Request,
     model_name: str,
     user_id: int,
     item_id: int,
     token: HTTPAuthorizationCredentials = Depends(authorization_by_token),
 ) -> ExplainResponse:
-    """
-    Пользователь переходит на карточку контента, на которой нужно показать
-    процент релевантности этого контента зашедшему пользователю,
-    а также текстовое объяснение почему ему может понравиться этот контент.
+    """The user goes to the content card on which to show
+    the percentage of relevance of this content to the logged in user,
+    as well as a textual explanation of why he might like this content.
 
-    Args:
-        request: запрос.
-        model_name: название модели, для которой нужно получить объяснения.
-        user_id: id пользователя, для которого нужны объяснения.
-        item_id: id контента, для которого нужны объяснения.
+     Args:
+         model_name: The name of the model for which
+                     explanations are to be obtained.
+         user_id: id of the user for whom explanations are needed.
+         item_id: The id of the content for which explanations are needed.
+         token: authorization token
 
-    Return:
-        Response со значением процента релевантности и текстовым объяснением,
-        понятным пользователю.
-        ExplainResponse:
-            - "p": "процент релевантности контента item_id для пользователя
-                    user_id"
-            - "explanation": "текстовое объяснение почему рекомендован item_id"
+     return:
+         Response with a relevance percentage value and a textual explanation,
+         understandable to the user.
+         ExplainResponse:
+             - "score": "item_id content relevance percentage for the user
+                         user_id"
+             - "explanation": "textual explanation why the item_id is
+                              recommended"
     """
     app_logger.info(
-        f"Request explanation for model: {model_name}, user_id: {user_id}"
+        f"Request explanation for model: {model_name}, user_id: {user_id}, item_id: {item_id}"
     )
 
     if model_name not in explained_model:
-        capture_exception(f"Model name '{model_name}' not found")
+        capture_message(f"Model name '{model_name}' not found")
         raise ModelNotFoundError(
             error_message=f"Model name '{model_name}' not found"
         )
 
     if user_id > 10 ** 9:
-        capture_exception(f"User {user_id} not found")
+        capture_message(f"User {user_id} not found")
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     score, explanation = model_output_explain.explain(
-        model_name, user_id, item_id, True
+        model_name, user_id, item_id,
     )
 
     return ExplainResponse(score=score, explanation=explanation)
