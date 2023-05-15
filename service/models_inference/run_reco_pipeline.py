@@ -4,9 +4,11 @@ import pandas as pd
 import yaml
 
 from service.models_inference.knn_model.reco_knn_model import RecommendUserKNN
-from service.models_inference.vector_model.reco_vector_model import \
-    RecommendVectorModel
 from service.models_inference.ranker_model.reco_ranker_model import RankerModel
+from service.models_inference.vector_model.reco_vector_model import (
+    RecommendVectorModel,
+)
+from service.utils import Columns
 
 
 class MainPipeline:
@@ -56,7 +58,7 @@ class MainPipeline:
                 self.models["candidates"]["user_id"] == user_id
             ].explode(
                 column=["item_id", "lfm_score", "rank"]
-            )[["item_id", "lfm_score", "rank"]]
+            )[[Columns.Item, "lfm_score", "rank"]]
 
             if len(candidates) == 0:
                 return []

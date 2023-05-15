@@ -1,22 +1,23 @@
 from typing import List
 
+import sentry_sdk
 import yaml
 from fastapi import APIRouter, Depends, FastAPI, Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
-import sentry_sdk
-from sentry_sdk import capture_exception
+from sentry_sdk import capture_message
 
 from service.api.exceptions import (
     AuthenticateError,
     ModelNotFoundError,
     UserNotFoundError,
 )
+from service.casual_inference import ModelOutputExplain
 from service.configs.responses_cfg import example_responses
 from service.log import app_logger
-from service.utils.common_artifact import registered_model
-from service.models_inference.run_reco_pipeline import MainPipeline
 from service.models_inference.popular.reco_popular import add_reco_popular
+from service.models_inference.run_reco_pipeline import MainPipeline
+from service.utils.common_artifact import explained_model, registered_model
 
 with open('./service/envs/authentication_env.yaml') as env_config:
     ENV_TOKEN = yaml.safe_load(env_config)
@@ -30,11 +31,17 @@ sentry_sdk.init(
 )
 
 pipeline = MainPipeline()
+model_output_explain = ModelOutputExplain(explained_model)
 
 
 class RecoResponse(BaseModel):
     user_id: int
     items: List[int]
+
+
+class ExplainResponse(BaseModel):
+    score: int
+    explanation: str
 
 
 router = APIRouter()
@@ -75,17 +82,13 @@ async def get_reco(
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
     if model_name not in registered_model:
-        capture_exception(f"Model name '{model_name}' not found")
+        capture_message(f"Model name '{model_name}' not found")
         raise ModelNotFoundError(
             error_message=f"Model name '{model_name}' not found"
         )
 
     if user_id > 10 ** 9:
-        capture_exception(f"User {user_id} not found")
-        raise UserNotFoundError(error_message=f"User {user_id} not found")
-
-    if user_id % 666 == 0:
-        capture_exception(f"User {user_id} not found")
+        capture_message(f"User {user_id} not found")
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     k_recs = request.app.state.k_recs
@@ -94,6 +97,58 @@ async def get_reco(
     recs = add_reco_popular(k_recs=k_recs, curr_recs=recs)
 
     return RecoResponse(user_id=user_id, items=recs)
+
+
+@router.get(
+    path="/explain/{model_name}/{user_id}/{item_id}",
+    tags=["Explanations"],
+    response_model=ExplainResponse,
+)
+async def explain(
+    model_name: str,
+    user_id: int,
+    item_id: int,
+    token: HTTPAuthorizationCredentials = Depends(authorization_by_token),
+) -> ExplainResponse:
+    """The user goes to the content card on which to show
+    the percentage of relevance of this content to the logged in user,
+    as well as a textual explanation of why he might like this content.
+
+     Args:
+         model_name: The name of the model for which
+                     explanations are to be obtained.
+         user_id: id of the user for whom explanations are needed.
+         item_id: The id of the content for which explanations are needed.
+         token: authorization token
+
+     return:
+         Response with a relevance percentage value and a textual explanation,
+         understandable to the user.
+         ExplainResponse:
+             - "score": "item_id content relevance percentage for the user
+                         user_id"
+             - "explanation": "textual explanation why the item_id is
+                              recommended"
+    """
+    app_logger.info(
+        f"Request explanation for model: {model_name}, user_id: {user_id}, item_id: {item_id}"
+    )
+
+    if model_name not in explained_model:
+        capture_message(f"Model name '{model_name}' not found")
+        raise ModelNotFoundError(
+            error_message=f"Model name '{model_name}' not found"
+        )
+
+    if user_id > 10 ** 9:
+        capture_message(f"User {user_id} not found")
+        raise UserNotFoundError(error_message=f"User {user_id} not found")
+
+    score, explanation = model_output_explain.explain(
+        model_name, user_id, item_id,
+    )
+
+    return ExplainResponse(score=score, explanation=explanation)
 
 
 def add_views(app: FastAPI) -> None:
